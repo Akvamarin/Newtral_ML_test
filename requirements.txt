@@ -1,5 +1,6 @@
 chardet
 ftfy
 pandas
+sentencepiece
 torch
 transformers
