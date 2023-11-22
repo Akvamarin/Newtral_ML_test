@@ -1,5 +1,6 @@
 chardet
 ftfy
+matplotlib
 pandas
 sentencepiece
 sklearn
