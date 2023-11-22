@@ -7,3 +7,4 @@ sklearn
 spacy
 torch
 transformers
+wordcloud
