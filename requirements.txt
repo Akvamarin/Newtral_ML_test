@@ -3,5 +3,6 @@ ftfy
 pandas
 sentencepiece
 sklearn
+spacy
 torch
 transformers
