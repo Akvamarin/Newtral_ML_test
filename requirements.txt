@@ -3,7 +3,7 @@ ftfy
 matplotlib
 pandas
 sentencepiece
-sklearn
+scikit-learn
 spacy
 torch
 transformers
