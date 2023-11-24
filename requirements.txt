@@ -1,4 +1,5 @@
 chardet
+clean-text
 ftfy
 matplotlib
 pandas
