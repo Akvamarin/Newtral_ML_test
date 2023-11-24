@@ -6,7 +6,7 @@ values without having to change every usage on the code.
 
 # Dictionary keys
 TOXIC, NON_TOXIC = 'TOXIC', 'NON-TOXIC'
-TWITTER, NEWS = "twitter", "news"
+TWITTER, NEWS = "twitter", "news-articles"
 
 # Dataset columns
 ID, TEXT, LABEL, ORIGIN = 'id','text','label','origin'
