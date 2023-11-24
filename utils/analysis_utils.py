@@ -14,7 +14,7 @@ from .constants import TOXIC, NON_TOXIC, TWITTER, NEWS
 # --------------------- ANALYSIS METHODS --------------------- #
 
 
-def get_crosstab(dataset_df: pd.DataFrame, rows_label: str, columns_label: str) -> pd.DataFrame:
+def get_norm_crosstab(dataset_df: pd.DataFrame, rows_label: str, columns_label: str) -> pd.DataFrame:
     """
     Gets the cross distribution of two columns in a DataFrame.
 
@@ -78,7 +78,7 @@ def get_word_freqs(processed_words: dict[str, Doc|dict]) -> dict[str, Counter|di
 
 # --------------------- VISUALIZATION METHODS --------------------- #
 
-def visualize_crosstab(cross_dist_df: pd.DataFrame, title: str,
+def visualize_norm_crosstab(cross_dist_df: pd.DataFrame, title: str,
                                     rows_name: str, columns_name: str) -> Styler:
     """
     Visualizes the cross distribution of labels and prefixes for a given dataset, including totals
