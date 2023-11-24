@@ -78,7 +78,7 @@ def get_word_freqs(processed_words: dict[str, Doc|dict]) -> dict[str, Counter|di
 
 # --------------------- VISUALIZATION METHODS --------------------- #
 
-def visualize_combined_distribution(cross_dist_df: pd.DataFrame, title: str,
+def visualize_crosstab(cross_dist_df: pd.DataFrame, title: str,
                                     rows_name: str, columns_name: str) -> Styler:
     """
     Visualizes the cross distribution of labels and prefixes for a given dataset, including totals
