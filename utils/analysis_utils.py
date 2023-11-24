@@ -155,12 +155,12 @@ def visualize_word_freqs_by_toxicity_and_origin(word_freqs: dict[str, dict[str, 
             # Generate the column with word and counts
             partial_df = pd.DataFrame(word_freqs[label][origin].most_common(max_rows), columns=['word', 'count'])
             # Add a new column with ratio
-            partial_df['ratio'] = partial_df['word'].apply(func=lambda x: "{:.2f}".format(global_toxicity_freqs[label][x] * 100))
-            # Sort by ratio
+            partial_df['ratio'] = partial_df['word'].apply(func=lambda x: global_toxicity_freqs[label][x] * 100)
+            # Orden before applying format (there is a 100% value)
             partial_df.sort_values(by='ratio', ascending=False, inplace=True)
+            partial_df['ratio'] = partial_df['ratio'].apply("{:.2f}".format)
             # Reset index to make sure they are all placed side to side
             partial_df.reset_index(drop=True, inplace=True)
-
             # Add the DataFrame to the corresponding list
             dataframes[label].append(partial_df)
 
