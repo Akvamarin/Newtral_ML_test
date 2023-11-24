@@ -14,7 +14,7 @@ from .constants import TOXIC, NON_TOXIC, TWITTER, NEWS
 # --------------------- ANALYSIS METHODS --------------------- #
 
 
-def get_norm_cross_dist_table(dataset_df: pd.DataFrame, rows_label: str, columns_label: str) -> pd.DataFrame:
+def get_crosstab(dataset_df: pd.DataFrame, rows_label: str, columns_label: str) -> pd.DataFrame:
     """
     Gets the cross distribution of two columns in a DataFrame.
 
