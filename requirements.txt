@@ -3,8 +3,6 @@ ftfy
 matplotlib
 pandas
 sentencepiece
-scikit-learn
 spacy
 torch
 transformers
-wordcloud
