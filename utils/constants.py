@@ -11,3 +11,18 @@ TWITTER, NEWS = "twitter", "news-articles"
 # Dataset columns
 ID, TEXT, LABEL, ORIGIN = 'id','text','label','origin'
 ID_TYPE, ENGLISH, FRENCH = 'id-type','english','french'
+
+# Regex
+TWITTER_REGEX = r'https://t\.co/\S+'
+
+# Set names
+TRAIN, VAL, TEST = 'TRAIN', 'VAL', 'TEST'
+TRAIN_VAL = f"{TRAIN}_{VAL}"
+
+# Visualization keys
+SPANISH = 'spanish'
+COLUMN_TO_LANG = {
+  TEXT: SPANISH,
+  ENGLISH: ENGLISH,
+  FRENCH: FRENCH
+}
