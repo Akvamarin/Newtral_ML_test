@@ -8,6 +8,9 @@ import pandas as pd
 from pandas.io.formats.style import Styler
 from spacy.tokens.doc import Doc
 
+
+import matplotlib.pyplot as plt
+from sklearn.metrics import confusion_matrix
 # Partial import because it will be used in a notebook and things get easier this way
 from .constants import TOXIC, NON_TOXIC, TWITTER, NEWS
 
@@ -183,6 +186,29 @@ def visualize_word_freqs_by_toxicity_and_origin(word_freqs: dict[str, dict[str, 
 
     return global_toxicity_freqs, style_dataframe(bag_of_words, num_rows=max_rows)
 
+
+def show_toxicity_vs_sentiment_confusion_matrix(toxicity_labels: list[int], sentiment_labels: list[int],
+                                                title: str):
+
+    cm = confusion_matrix(y_true=toxicity_labels, y_pred=sentiment_labels, normalize='true')
+    # Remove the last row and cast it to percentage
+    cm = cm[:2, :]*100
+
+    # Plot the confusion matrix
+    plt.matshow(cm, cmap=plt.cm.Purples)
+    plt.title(title)
+    plt.colorbar()
+    plt.xlabel('Sentiment')
+    plt.ylabel('Toxicity')
+    plt.xticks(np.arange(cm.shape[1]), ['Postive', 'Neutral', 'Negative'])
+    plt.yticks(np.arange(cm.shape[0]), ['Non Toxic', 'Toxic'])
+
+    for i in range(cm.shape[0]):
+        for j in range(cm.shape[1]):
+            plt.text(x=j, y=i, s=f"{round(cm[i, j], ndigits=1)}%", 
+                    ha='center', va='center', color='black')
+
+    plt.show()
 
 def format_text_col_df(row: pd.Series):
     """
