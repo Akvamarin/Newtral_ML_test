@@ -1,6 +1,7 @@
 chardet
 clean-text
 scikit-learn
+scipy
 ftfy
 matplotlib
 pandas
@@ -9,4 +10,3 @@ spacy
 torch
 transformers
 unidecode
-spacy
