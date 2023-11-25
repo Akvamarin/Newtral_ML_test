@@ -7,7 +7,7 @@ from collections import Counter
 import pandas as pd
 from pandas.io.formats.style import Styler
 from spacy.tokens.doc import Doc
-
+import numpy as np
 
 import matplotlib.pyplot as plt
 from sklearn.metrics import confusion_matrix
