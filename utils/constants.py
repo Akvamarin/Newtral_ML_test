@@ -4,9 +4,12 @@ for avoiding typos, making the code more readable and maintain the possibility o
 values without having to change every usage on the code.
 """
 
+# This repository name
+REPO_NAME = 'toxicity_analysis'
+
 # Dictionary keys
 TOXIC, NON_TOXIC = 'TOXIC', 'NON-TOXIC'
-TWITTER, NEWS = "twitter", "news-articles"
+TWITTER, NEWS = 'twitter', 'news-articles'
 
 # Dataset columns
 ID, TEXT, LABEL, ORIGIN = 'id','text','label','origin'
