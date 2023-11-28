@@ -58,7 +58,7 @@ FULL_MODEL_LAST, MODEL_LAST = 'full_model_last.pt', 'model_last.pt'
 BEST_MODEL = 'best_model.pt'
 
 
-TRAIN_LOST_HIST, TRAIN_ACC_HIST = 'train_loss_hist', 'train_acc_hist'
+TRAIN_LOSS_HIST, TRAIN_ACC_HIST = 'train_loss_hist', 'train_acc_hist'
 VAL_LOSS_HIST, VAL_ACC_HIST = 'val_loss_hist', 'val_acc_hist'
 BEST_VAL_LOSS, BEST_VAL_LOSS_EPOCH = 'best_val_loss', 'best_val_loss_epoch'
 ACC_AT_BEST_LOSS = 'acc_at_best_loss'
