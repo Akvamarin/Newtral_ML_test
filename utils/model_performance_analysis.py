@@ -15,6 +15,7 @@ import numpy as np
 from sklearn.metrics import confusion_matrix
 from torch.utils.data import DataLoader
 import torch
+import tqdm
 
 # ------------------------------- PREDICTION FUNCTIONS ---------------------------------------------
 def predict_with_probabilities(model_path: str, tokenizer: DistilBertTokenizer,
