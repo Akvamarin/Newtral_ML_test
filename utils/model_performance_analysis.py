@@ -8,7 +8,7 @@ from matplotlib import pyplot as plt
 from transformers import DistilBertForSequenceClassification, DistilBertTokenizer
 
 from sklearn.metrics import precision_recall_curve, auc
-from .constants import NON_TOXIC, TOXIC, TRUE_LABELS, PRED_LABELS, PRED_PROBS, MODEL_NAME,\
+from .constants import NON_TOXIC, TOXIC, TRUE_LABELS, PRED_LABELS, PRED_PROBS, MODEL_NAME, MODEL_MAX_LENGTH,\
     BEST_MODEL, TEXT, LABEL
 from copy import deepcopy
 import numpy as np
@@ -39,7 +39,7 @@ def predict_with_probabilities(model_path: str, tokenizer: DistilBertTokenizer,
     """
 
     def tokenize_batch(batch):
-        return tokenizer(batch, padding=True, truncation=True, max_length=512, return_tensors="pt").to(device)
+        return tokenizer(batch, padding=True, truncation=True, max_length=MODEL_MAX_LENGTH, return_tensors="pt").to(device)
 
     assert os.path.isfile(model_path), f"Model path {model_path} is not a file"
 
@@ -49,7 +49,7 @@ def predict_with_probabilities(model_path: str, tokenizer: DistilBertTokenizer,
     # Move the model to the device
     model = model.to(device)
 
-    state_dict = torch.load(os.path.join(model_path, BEST_MODEL), map_location=device)
+    state_dict = torch.load(model_path, map_location=device)
     # Update the model's state dictionary
     model.load_state_dict(state_dict)
 
@@ -66,13 +66,13 @@ def predict_with_probabilities(model_path: str, tokenizer: DistilBertTokenizer,
             pred_labels, pred_probs = [], []
             true_labels = lang_dataset[LABEL].tolist()
 
-            for batch in data_loader:
+            for batch in tqdm(data_loader, desc=f"Predicting for {lang.title()}", total=len(data_loader)):
                 # Execute the inference and get the logits
                 logits = model(**batch).logits
                 # Execute softmax to get the probabilities (detach them and cast them to numpy)
                 probabilities = torch.nn.functional.softmax(logits, dim=1).detach().cpu().numpy()
                 # Get the predictions by comparing the probabilities with the confidence threshold
-                predictions = np.where(probabilities[:, 1] > conf_th, x=1, y=0)
+                predictions = np.where(probabilities[:, 1] > conf_th, 1, 0)
                 # Add the predictions and probabilities to the results
                 pred_probs.extend(list(probabilities))
                 pred_labels.extend(list(predictions))
