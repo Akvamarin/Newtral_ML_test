@@ -9,13 +9,14 @@ from transformers import DistilBertForSequenceClassification, DistilBertTokenize
 
 from sklearn.metrics import precision_recall_curve, auc
 from .constants import NON_TOXIC, TOXIC, TRUE_LABELS, PRED_LABELS, PRED_PROBS, MODEL_NAME, MODEL_MAX_LENGTH,\
-    BEST_MODEL, TEXT, LABEL
+     TEXT, LABEL
 from copy import deepcopy
 import numpy as np
 from sklearn.metrics import confusion_matrix
 from torch.utils.data import DataLoader
 import torch
 from tqdm import tqdm
+from IPython.display import HTML
 
 # ------------------------------- PREDICTION FUNCTIONS ---------------------------------------------
 def predict_with_probabilities(model_path: str, tokenizer: DistilBertTokenizer,
@@ -215,3 +216,124 @@ def plot_combined_precision_recall_curve(results_by_lang: dict[str, dict[str, li
     plt.legend()
     plt.grid(True)
     plt.show()
+
+
+def find_top_failures(dataset_by_language: dict[str, pd.DataFrame],
+                      matches_by_language: dict[str, dict[str, list]],
+                      top_failures: int = 5) -> dict[str, dict[str, list[dict[str, int|str|float]]]]:
+    """
+    Get the top 5 failures for each language and each label, sorted by confidence.
+    :param dataset_by_language: dict[str, pd.DataFrame]. A dictionary containing dataframes for each language. They must
+    contain a column named TEXT.
+    :param matches_by_language: dict[str, dict[str, list[int]|list[float, float]]]. A dictionary containing
+    the true labels, predicted labels, and predicted probabilities for each language.
+
+    :return: dict[str, dict[str, list[dict[str, int|str|float]]]]. A dictionary with the following structure:
+                {<language>: { 'False TOXIC':
+                        [{'true_label': int, 'pred_label': int, 'confidence': float, 'text': str}, ...],
+                            'False NON-TOXIC':
+                        [{'true_label': int, 'pred_label': int, 'confidence': float, 'text': str}, ...]}}
+    """
+    top_failures_by_language = {}
+
+    for lang, test_set in dataset_by_language.items():
+        true_labels = matches_by_language[lang][TRUE_LABELS]
+        pred_labels = matches_by_language[lang][PRED_LABELS]
+        pred_probs = matches_by_language[lang][PRED_PROBS]
+
+        failures_false_toxic, failures_false_nontoxic = [], []
+
+        for i, (true_label, pred_label, prob) in enumerate(zip(true_labels, pred_labels, pred_probs)):
+            if true_label != pred_label:
+                confidence = max(prob)  # Confidence of the predicted label
+                text = test_set.iloc[i][TEXT]
+                failure_info = {'true_label': true_label, 'pred_label': pred_label, 'confidence': confidence, 'text': text}
+
+                if true_label == 0:  # False TOXIC
+                    failures_false_toxic.append(failure_info)
+                else:  # False NON-TOXIC
+                    failures_false_nontoxic.append(failure_info)
+
+        # Sort and take top failures for each category
+        top_failures_false_toxic = sorted(failures_false_toxic, key=lambda x: x['confidence'], reverse=True)[:top_failures]
+        top_failures_false_nontoxic = sorted(failures_false_nontoxic, key=lambda x: x['confidence'], reverse=True)[:top_failures]
+
+        top_failures_by_language[lang] = {f'False {TOXIC}': top_failures_false_toxic, f'False {NON_TOXIC}': top_failures_false_nontoxic}
+
+    return top_failures_by_language
+
+def visualize_top_failures(top_failures_by_language: dict[str, dict[str, list[dict[str, int|str|float]]]]) -> HTML:
+    """
+    Visualize the top failures for each language and each label, sorted by confidence.
+
+    :param top_failures_by_language: dict[str, dict[str, list[dict[str, int|str|float]]]]. A dictionary with the following structure:
+                {<language>: { 'False TOXIC':
+                        [{'true_label': int, 'pred_label': int, 'confidence': float, 'text': str}, ...],
+                            'False NON-TOXIC':
+                        [{'true_label': int, 'pred_label': int, 'confidence': float, 'text': str}, ...]}}.
+                returned by find_top_failures.
+
+    :return: IPython.display.HTML. An HTML object containing the visualization that can be displayed in a notebook.
+    """
+    style = """
+    <style>
+    .material-card {
+        box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+        transition: 0.3s;
+        border-radius: 10px;
+        padding: 15px;
+        margin-bottom: 20px;
+        background-color: #fff;
+    }
+
+    .card-title {
+        color: #06c2c2;
+        font-size: 18px;
+        margin-bottom: 10px;
+        font-weight: bold;
+    }
+
+    .card-content {
+        color: #333;
+    }
+
+    .language-section {
+        margin-bottom: 30px;
+    }
+
+    .label-section {
+        margin-bottom: 20px;
+    }
+
+    .section-title {
+        color: #333;
+        font-size: 22px;
+        margin-bottom: 15px;
+        font-weight: bold;
+    }
+    </style>
+    """
+    cards_html = ""
+
+    for lang, failure_categories in top_failures_by_language.items():
+        cards_html += f"<div class='language-section'><h2 class='section-title'>{lang.title()}</h2>"
+
+        for category, failures in failure_categories.items():
+            cards_html += f"<div class='label-section'><h3 class='section-title'>{category}</h3>"
+
+            for failure in failures:
+                confidence = failure['confidence']
+                text = failure['text']
+
+                cards_html += f"""
+                <div class="material-card">
+                    <div class="card-title">Failed with conf: {confidence:.2f}</div>
+                    <div class="card-content">{text}</div>
+                </div>
+                """
+
+            cards_html += "</div>"  # Close label-section
+        cards_html += "</div>"  # Close language-section
+
+    # Combine the styles and HTML, then display it
+    return HTML(style + cards_html)
