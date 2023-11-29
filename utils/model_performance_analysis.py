@@ -324,10 +324,12 @@ def visualize_top_failures(top_failures_by_language: dict[str, dict[str, list[di
             for failure in failures:
                 confidence = failure['confidence']
                 text = failure['text']
+                true = TOXIC if failure['true_label'] == 1 else NON_TOXIC
+                pred = TOXIC if failure['pred_label'] == 1 else NON_TOXIC
 
                 cards_html += f"""
                 <div class="material-card">
-                    <div class="card-title">Failed with conf: {confidence:.2f}</div>
+                    <div class="card-title">Failed with conf: {confidence:.2f}. True: {true}. Pred:{pred} </div>
                     <div class="card-content">{text}</div>
                 </div>
                 """
