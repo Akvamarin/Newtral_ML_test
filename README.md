@@ -1,4 +1,4 @@
-#Modelo detector de toxicidad multilingüe (español, inglés, francés) en _tweets_ y artículos de noticias entrenado mediante _fine-tuning_
+# Modelo detector de toxicidad multilingüe (español, inglés, francés) en _tweets_ y artículos de noticias entrenado mediante _fine-tuning_
 
 Autor: Alba María García García
 
